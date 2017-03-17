@@ -1,5 +1,22 @@
 #!/bin/bash
 
+if [ ! -f /certs/ansible ]; then
+	echo no ansible cert found - this must be a fresh deployment.
+	echo generating cert....
+	ssh-keygen -f /certs/ansible -t rsa -N ''
+fi
+
+if cat ~/.ssh/config | grep 'Host node*'
+then
+    echo ssh config already set up.
+else
+    echo adding ssh config.
+	echo "Host node* 
+	    HostName %h 
+	    IdentityFile /certs/ansible" >> ~/.ssh/config
+fi
+
+
 /usr/bin/ansible-tower-service start 
 
 tail -f \
