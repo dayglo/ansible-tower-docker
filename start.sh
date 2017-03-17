@@ -13,7 +13,8 @@ else
     echo adding ssh config.
 	echo "Host node* 
 	    HostName %h 
-	    IdentityFile /certs/ansible" >> ~/.ssh/config
+	    IdentityFile /certs/ansible
+	    StrictHostKeyChecking no" >> ~/.ssh/config
 fi
 
 

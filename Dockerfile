@@ -10,7 +10,7 @@ ENV PACKAGENAME=ansible-tower-setup-${TOWER_VERSION}
 # Install tower
 
 RUN apt-get update && \
-	apt-get install -y software-properties-common sudo iproute2
+	apt-get install -y software-properties-common sudo iproute2 nano
 RUN apt-add-repository ppa:ansible/ansible
 
 ADD https://releases.ansible.com/ansible-tower/setup/${PACKAGENAME}.tar.gz /tmp/towersetup/
