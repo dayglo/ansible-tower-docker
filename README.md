@@ -25,6 +25,6 @@ docker run -it \
 	-p 80:80 -p 443:443 \
 	-v /wherever/you/put/your/license/file/license.txt:/etc/tower/license \
 	--name tower \
+	--privileged \
 	dayglo/ansibletower
 ```
-
