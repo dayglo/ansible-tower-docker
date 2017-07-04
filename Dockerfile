@@ -10,13 +10,19 @@ ENV PACKAGENAME=ansible-tower-setup-${TOWER_VERSION}
 # Install tower
 
 RUN apt-get update && \
-	apt-get install -y software-properties-common sudo iproute2 nano
-RUN apt-add-repository ppa:ansible/ansible
+	apt-get install -y \ 
+		curl \
+		iproute2 \
+		locales \
+		nano \
+		software-properties-common \
+		sudo 
 
-ADD https://releases.ansible.com/ansible-tower/setup/${PACKAGENAME}.tar.gz /tmp/towersetup/
-
-RUN cd /tmp/towersetup \
-	&& tar -xvf ${PACKAGENAME}.tar.gz 
+RUN apt-add-repository ppa:ansible/ansible &&\
+	mkdir -p /tmp/towersetup &&\
+	cd /tmp/towersetup &&\
+	curl -SOL https://releases.ansible.com/ansible-tower/setup/${PACKAGENAME}.tar.gz &&\
+	tar -xvf ${PACKAGENAME}.tar.gz 
 
 ADD inventory /tmp/towersetup/${PACKAGENAME}/
 
@@ -28,18 +34,20 @@ RUN cd /tmp/towersetup/${PACKAGENAME} \
 
 # Our stuff
 
-COPY start.sh /
-RUN chmod +x ./start.sh
+COPY start /
+RUN chmod +x ./start
 
 RUN mkdir -p /certs
 
 # VOLUME ${PG_DATA}
 VOLUME /certs
 
-VOLUME /etc/tower/license
-
 VOLUME ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
+
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+ARG no_proxy
 
 EXPOSE 443 80
 
-CMD ["/start.sh"]
+CMD ["/start"]
