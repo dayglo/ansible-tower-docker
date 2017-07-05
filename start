@@ -1,24 +1,40 @@
 #!/bin/bash
 
-if [ ! -f /certs/ansible ]; then
-	echo no ansible cert found - this must be a fresh deployment.
-	echo generating cert....
-	ssh-keygen -f /certs/ansible -t rsa -N ''
-fi
 
-if cat ~/.ssh/config | grep 'Host node*'
-then
-    echo ssh config already set up.
-else
+/usr/bin/ansible-tower-service start
+
+
+sleep 5
+
+echo checking tower initial config...
+if [ -f /firstboot.flg ]; then
+	echo this is the first boot of this container.
+
+	echo checking ansible certs
+	if [ ! -f /certs/ansible ]; then
+		echo no ansible cert found - this must be a fresh deployment.
+		echo generating cert....
+		ssh-keygen -f /certs/ansible -t rsa -N ''
+	fi
+
     echo adding ssh config.
 	echo "Host node* 
 	    HostName %h 
 	    IdentityFile /certs/ansible
 	    StrictHostKeyChecking no" >> ~/.ssh/config
+
+	echo checking initial config playbook
+	if [ "$TOWER_INIT_SCM_URL" == "not_set" ]; then
+		echo No initial config playbook was supplied. Tower will be as default.
+	else
+		git clone $TOWER_INIT_SCM_URL /tmp/initial_tower_config
+		ansible-playbook -i "localhost," -c local /tmp/initial_tower_config/playbook.yml &&\
+		echo done.
+	fi
+
+	rm /firstboot.flg
 fi
 
-
-/usr/bin/ansible-tower-service start 
 
 tail -f \
 /var/log/postgresql/postgresql-9.4-main.log \

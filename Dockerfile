@@ -51,3 +51,13 @@ ARG no_proxy
 EXPOSE 443 80
 
 CMD ["/start"]
+
+RUN echo deleteme > /firstboot.flg
+
+RUN apt install -y python-pip &&\
+	pip install ansible-tower-cli &&\
+	tower-cli config host localhost  &&\
+	tower-cli config username admin  &&\
+	tower-cli config password cloud5cloud!
+
+ENV TOWER_INIT_SCM_URL not_set
