@@ -35,6 +35,11 @@ if [ -f /firstboot.flg ]; then
 	rm /firstboot.flg
 fi
 
+if [ -f /userstart ]; then
+	echo "Running user start script"
+	source /userstart
+fi
+
 
 tail -f \
 /var/log/postgresql/postgresql-9.4-main.log \
