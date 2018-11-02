@@ -4,7 +4,7 @@ FROM ubuntu:16.04
 
 MAINTAINER george@automationlogic.com
 
-ENV TOWER_VERSION=3.1.1
+ENV TOWER_VERSION=3.3.1-1
 ENV PACKAGENAME=ansible-tower-setup-${TOWER_VERSION}
 
 # Install tower
@@ -58,6 +58,6 @@ RUN apt install -y python-pip &&\
 	pip install ansible-tower-cli &&\
 	tower-cli config host localhost  &&\
 	tower-cli config username admin  &&\
-	tower-cli config password cloud5cloud!
+	tower-cli config password password
 
 ENV TOWER_INIT_SCM_URL not_set
